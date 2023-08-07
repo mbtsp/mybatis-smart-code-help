@@ -1,0 +1,18 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+    <actions>
+        <action id="MybatisSupportFormGeneratorAction"
+                class="com.mybatis.action.database.MybatisSupportFormGeneratorAction"
+                text="Mybatis Generator" description="Generator mybatis sql action">
+            <add-to-group group-id="DatabaseViewPopupMenu" anchor="first"/>
+        </action>
+        <action id="MultipleMybatisSupportFormGeneratorAction"
+                class="com.mybatis.action.database.MultipleMybatisSupportFormGeneratorAction"
+                text="Multiple Mybatis Generator" description="Multiple Generator mybatis sql action">
+            <add-to-group group-id="DatabaseViewPopupMenu" anchor="first"/>
+        </action>
+    </actions>
+
+</idea-plugin>

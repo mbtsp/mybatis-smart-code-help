@@ -1,0 +1,183 @@
+<idea-plugin>
+    <id>com.zoulejiu.mybatis.smart.plugin</id>
+    <!--    <id>com.zoulejiu.mybatis.smart.code.help</id>-->
+    <name>Mybatis Smart Code Help</name>
+    <vendor email="zoulejiu@qq.com" url="https://github.com/zoulejiu/mybatisSmartCodeHelp">LeJiu</vendor>
+    <description>
+        <![CDATA[
+        <div>
+            <p><a href="https://plugins.jetbrains.com/plugin/18389-mybatis-smart-code-help-pro">Pro版本</a>|<a href="https://github.com/zoulejiu/mybatisSmartCodeHelp">GitHub</a> |<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oH9tE2NvvehHNjpwjIyQ4dxqXctidmX2&jump_from=webapi">qqGroup:777347929</a></p>
+            <ul>
+                <li>MybatisSmartPlugin is a mybatis auxiliary plug-in</li>
+                <li>Contains one-click generation of Dao, Service, and XML basic code</li>
+                <li>Contains some commonly used annotations such as @Data, @Mapper, etc. to cooperate with generation</li>
+                <li>Contains highlighting Dao methods and Xml methods, and can jump back and forth</li>
+                <li>Contains some smart reminders</li>
+                <li>More functions are in continuous development</li>
+                <li>How to use:</br>
+                   You must configure the Database Tools and SQL plugin</br>
+                    Configure your database account password to make it work normally</br>
+                    Select the table to be generated in Database, right-click to open, and select Mybatis Generator</br>
+                </li>
+            </ul>
+
+        </div>
+         ]]>
+    </description>
+    <idea-version since-build="203.5981.155" until-build="213.*"/>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.java</depends>
+    <depends optional="true" config-file="plugin-spring.xml">com.intellij.spring</depends>
+    <depends config-file="plugin-spring-boot.xml" optional="true">com.intellij.spring.boot</depends>
+    <depends optional="true" config-file="plugin-database.xml">com.intellij.database</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <dom.fileMetaData implementation="com.mybatis.dom.description.MapperDescription"
+                          id="zoulejiu.mybatis.MapperDescription" rootTagName="mapper"/>
+        <dom.fileMetaData implementation="com.mybatis.dom.description.ConfigurationDescription"
+                          id="zoulejiu.mybatis.configtionDescription" rootTagName="configuration"/>
+
+        <!-- Add your extensions here com.intellij.lang.java -->
+        <definitionsScopedSearch implementation="com.mybatis.definitionsearch.MapperDefinitionSearch"
+                                 id="zoulejiu.myabtis.MapperDefinitionSearch"/>
+        <!-- 与搜索配套的跳转 -->
+        <gotoTargetRendererProvider order="first" implementation="com.mybatis.provider.MapperXmlProvider"/>
+        <!-- java mapper 跳转xml-->
+        <codeInsight.lineMarkerProvider id="zoulejiu.mybatis.MybatisJavaLineMarkerProvider" language="JAVA"
+                                        implementationClass="com.mybatis.codeInsight.MybatisJavaLineMarkerProvider"/>
+        <!-- xml 跳转java -->
+        <codeInsight.lineMarkerProvider id="zoulejiu.mybatis.StatementLineMarkerProvider" language="XML"
+                                        implementationClass="com.mybatis.codeInsight.StatementLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider id="zoulejiu.mybatis.InjectionLineMarkerProvider" language="JAVA"
+                                        implementationClass="com.mybatis.codeInsight.InjectionLineMarkerProvider"/>
+        <refactoring.elementListenerProvider implementation="com.mybatis.refactoring.MapperRefactoringProvider"/>
+
+        <!-- 在mapper.xml内部, 进行智能提示, 例如: #{提示位置} -->
+        <completion.contributor id="zoulejiu.mybatis.SqlParamCompletionContributor" language="SQL"
+                                implementationClass="com.mybatis.contributor.SqlParamCompletionContributor"
+                                order="first"/>
+        <completion.contributor id="zoulejiu.mybatis.JavaMapperNameContributor" language="JAVA"
+                                implementationClass="com.mybatis.contributor.JavaMapperNameContributor"/>
+        <localInspection implementationClass="com.mybatis.inspection.GenerateStatementIntention"
+                         id="zoulejiu.mybatis.smart.generate.statement.intention"
+                         displayName="Generate Statement to XMl"
+                         language="JAVA"
+                         level="ERROR"
+                         enabledByDefault="true"
+                         shortName="GenerateStatement"
+                         groupName="MybatisSmart">
+        </localInspection>
+<!--        <localInspection implementationClass="com.mybatis.inspection.MybatisMapperXmlInspection" language="XML" enabledByDefault="true" level="ERROR" displayName="Mapper xml check"/>-->
+        <intentionAction order="first" id="zoulejiu.mybatis.smart.generate.code.by.method.name">
+            <className>com.mybatis.intentionAction.GenerateCodeByMethodNameIntentionAction</className>
+        </intentionAction>
+        <intentionAction order="first" id="zoulejiu.mybatis.smart.generate.code.by.method.name.if.test">
+            <className>com.mybatis.intentionAction.GenerateCodeIFTestByMethodNameIntentionAction</className>
+        </intentionAction>
+        <typedHandler implementation="com.mybatis.action.MybatisTypedHandler" id="zoulejiu.mybatis.type.handler"
+                      order="first"/>
+        <projectService id="zoulejiu.mybatis.state.component"
+                        serviceImplementation="com.mybatis.state.MybatisStateComponent"/>
+        <projectService serviceImplementation="com.mybatis.state.MybatisDatabaseComponent"/>
+        <projectService serviceImplementation="com.mybatis.state.MultipleMybatisStateComponent"/>
+        <projectService serviceImplementation="com.mybatis.service.EditorService"
+                        id="zoulejiu.mybatis.plugin.editor.service"/>
+        <projectService serviceImplementation="com.mybatis.service.JavaService"
+                        id="zoulejiu.mybatis.plugin.java.server"/>
+        <projectService serviceImplementation="com.mybatis.alias.AliasFacade"
+                        id="zoulejiu.mybatis.plugin.alias.facade"/>
+        <projectService id="zoulejiu.mybatis.locator.mybatis"
+                        serviceImplementation="com.mybatis.locator.MapperLocator"/>
+        <localInspection implementationClass="com.mybatis.inspection.GenerateXmlFileMethodNameToJavaFile"
+                         language="XML"
+                         enabledByDefault="true"
+                         level="ERROR"
+                         shortName="GenerateJavaMethod"
+                         displayName="Generate Java method"
+                         id="zoulejiu.Generate.Xml.File.Method.Name.To.Java.File"
+                         groupName="MybatisSmart"/>
+        <toolWindow id="Mybatis Database Tool"
+                    secondary="false"
+                    anchor="right"
+                    factoryClass="com.mybatis.action.tools.DatabaseToolFactory"
+                    icon="/icon/mybatisClass.svg">
+        </toolWindow>
+        <notificationGroup displayType="BALLOON" id="mybatis.smart.notification"/>
+        <notificationGroup displayType="BALLOON" id="mybatis.config.notification"/>
+        <errorHandler implementation="com.mybatis.report.MyErrorReportSubmitter"/>
+        <applicationConfigurable parentId="tools"
+                                 instance="com.mybatis.setting.MybatisSettingConfigurable"
+                                 id="mybatis.smart.setting.configurable"/>
+        <applicationService serviceImplementation="com.mybatis.state.MybatisSettingsState"/>
+        <postStartupActivity implementation="com.mybatis.listener.CheckMybatisPlugin"/>
+        <iconProvider implementation="com.mybatis.provider.MapperAndXmlIconProvider" id="mybatis.smart.icon"/>
+        <pluginReplacement implementation="com.mybatis.listener.CheckPluginCompatible"/>
+
+    </extensions>
+    <actions>
+        <action id="mybatisCommunitySupportFormGeneratorAction"
+                class="com.mybatis.action.database.MybatisCommunitySupportFormGeneratorAction"
+                text="Mybatis Generator" description="Generator mybatis sql action">
+        </action>
+        <action id="multipleMybatisCommunitySupportFormGeneratorAction"
+                class="com.mybatis.action.database.MultipleMybatisCommunitySupportFormGeneratorAction"
+                text="Multiple Mybatis Generator" description="Multiple Generator mybatis sql action">
+        </action>
+
+        <action class="com.mybatis.action.database.EditDataSources"
+                id="Edit.Mybatis.dataSource"
+                description="Edit"
+                text="Edit">
+        </action>
+        <action class="com.mybatis.action.database.AddDataSources"
+                id="Add.Mybatis.dataSource"
+                description="New"
+                text="New"
+                icon="AllIcons.General.Add">
+        </action>
+        <action class="com.mybatis.action.database.RefreshDataSources"
+                id="refresh.Mybatis.dataSource"
+                description="Refresh"
+                text="Refresh"
+                icon="AllIcons.Actions.Refresh">
+        </action>
+        <action class="com.mybatis.action.database.DropDataSources"
+                id="drop.Mybatis.dataSource"
+                description="Drop"
+                text="Drop" icon="AllIcons.General.Remove">
+            <keyboard-shortcut first-keystroke="DELETE" keymap="$default"/>
+        </action>
+
+        <group id="MybatisToolPopupMenu">
+            <reference id="multipleMybatisCommunitySupportFormGeneratorAction"/>
+            <reference id="mybatisCommunitySupportFormGeneratorAction"/>
+            <reference id="Add.Mybatis.dataSource"/>
+            <reference id="refresh.Mybatis.dataSource"/>
+            <reference id="Edit.Mybatis.dataSource"/>
+            <reference id="drop.Mybatis.dataSource"/>
+        </group>
+
+        <group id="MybatisToolBar">
+            <reference id="Add.Mybatis.dataSource"/>
+            <reference id="refresh.Mybatis.dataSource"/>
+            <reference id="Edit.Mybatis.dataSource"/>
+            <reference id="drop.Mybatis.dataSource"/>
+            <reference id="multipleMybatisCommunitySupportFormGeneratorAction"/>
+            <reference id="mybatisCommunitySupportFormGeneratorAction"/>
+        </group>
+        <group id="mybatis.smart.code.help.tool.main" class="com.mybatis.action.tools.MybatisSmartPluginMainTool"
+               text="Mybatis Smart Code" description="Mybatis smart code help tool" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </group>
+        <action id="mybatis.smart.generate.code" class="com.mybatis.action.tools.MybatisSmartPluginGenerateCode"
+                text="Generate Mybatis Code" description="Generate mybatis code">
+            <add-to-group group-id="mybatis.smart.code.help.tool.main" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt P" second-keystroke="ctrl alt EQUALS"/>
+        </action>
+
+
+    </actions>
+</idea-plugin>
