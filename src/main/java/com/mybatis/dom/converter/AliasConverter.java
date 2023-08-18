@@ -37,6 +37,11 @@ public class AliasConverter extends ConverterAdapter<PsiClass> implements Custom
 
     @Override
     public @Nullable String toString(@Nullable PsiClass psiClass, ConvertContext context) {
-        return this.delegate.toString(psiClass, context);
+        try {
+            return this.delegate.toString(psiClass, context);
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

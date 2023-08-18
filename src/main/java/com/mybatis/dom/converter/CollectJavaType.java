@@ -19,7 +19,12 @@ public class CollectJavaType extends ConverterAdapter<PsiClass> implements Custo
 
     @Override
     public @Nullable String toString(@Nullable PsiClass psiClass, ConvertContext context) {
-        return psiClassConverter.toString(psiClass, context);
+        try {
+            return psiClassConverter.toString(psiClass, context);
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     @Override
