@@ -1,7 +1,7 @@
 # mybatis-smart-code-help
 mybatis-smart-code-help Community version open source
 
-Plugin address: https://plugins.jetbrains.com/plugin/19161-database-tool
+Plugin address: https://plugins.jetbrains.com/plugin/16245-mybatis-smart-code-help
 
 ### <center><font color=blue size=5>Various functions are being improved, and you are welcome to submit bugs to promote the improvement of the plug-in.</font></center>
 [QQ群](https://qm.qq.com/cgi-bin/qm/qr?k=2OxKmoCNOEY3KmfvWENscQmAwpKfkfR2&jump_from=webapi)
